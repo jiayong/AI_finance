@@ -71,6 +71,55 @@ n_offsets = 10
 ############################
 
 
+##################################
+# FACTOR CONFIGURATION
+##################################
+
+# 因子集完全由这张表驱动。
+# 增删因子只需改这里，不需要动 FactorEngine，也不需要动下面的循环。
+#
+# 可用类型（见 FactorEngine.FACTOR_TYPES）：
+#   "momentum"   参数 [long_horizon, short_horizon]  -> Momentum{L}_{S}
+#   "volatility" 参数 [horizon]                      -> Volatility{H}
+#   "volume"     参数 [horizon]                      -> LogVolumeRatio{H}
+#   "return"     参数 [horizon]                      -> Return{H}
+
+FACTOR_SPECS = [
+    # Momentum
+    ("momentum",   [100, 5]),
+    ("momentum",   [60, 5]),
+    ("momentum",   [20, 5]),
+    ("momentum",   [10, 5]),
+
+    # Volatility
+    ("volatility", [100]),
+    ("volatility", [60]),
+    ("volatility", [20]),
+    ("volatility", [10]),
+
+    # Volume
+    ("volume",     [100]),
+    ("volume",     [60]),
+    ("volume",     [20]),
+    ("volume",     [10]),
+
+    # Short-Term Return
+    ("return",     [20]),
+    ("return",     [10]),
+    ("return",     [5]),
+]
+
+N_FACTORS_EXPECTED = len(FACTOR_SPECS)
+
+# 校验严格程度：
+#   False -> 只对致命问题报错，其他打印 WARNING
+#   True  -> 任何警告都直接报错
+STRICT_FACTOR_CHECK = False
+
+
+############################
+
+
 max_horizon = max(forecast_horizon_values)
 
 full_results = []
@@ -111,80 +160,14 @@ for forecast_horizon in forecast_horizon_values:
         data_engine
     )
 
-
-    # Momentum
-
-    factor_engine.add_momentum(
-        100,
-        5
+    factor_engine.add_factors(
+        FACTOR_SPECS
     )
 
-    factor_engine.add_momentum(
-        60,
-        5
-    )
-
-    factor_engine.add_momentum(
-        20,
-        5
-    )
-
-    factor_engine.add_momentum(
-        10,
-        5
-    )
-
-
-    # Volatility
-
-    factor_engine.add_volatility(
-        100
-    )
-
-    factor_engine.add_volatility(
-        60
-    )
-
-    factor_engine.add_volatility(
-        20
-    )
-
-    factor_engine.add_volatility(
-        10
-    )
-
-
-    # Volume
-
-    factor_engine.add_volume(
-        100
-    )
-
-    factor_engine.add_volume(
-        60
-    )
-
-    factor_engine.add_volume(
-        20
-    )
-
-    factor_engine.add_volume(
-        10
-    )
-
-
-    # Short-Term Return
-
-    factor_engine.add_shortterm_return(
-        20
-    )
-
-    factor_engine.add_shortterm_return(
-        10
-    )
-
-    factor_engine.add_shortterm_return(
-        5
+    # 配置与登记表必须一致，否则下游会静默漏掉因子
+    assert len(factor_engine.features) == N_FACTORS_EXPECTED, (
+        f"Expected {N_FACTORS_EXPECTED} factors from FACTOR_SPECS "
+        f"but registered {len(factor_engine.features)}: {factor_engine.features}"
     )
 
 
@@ -195,6 +178,12 @@ for forecast_horizon in forecast_horizon_values:
     model_data = (
         factor_engine
         .build_model_data()
+    )
+
+    # 跑模型前校验：确认「以为生效的因子」真的生效且数值健康
+    factor_engine.verify(
+        model_data,
+        strict=STRICT_FACTOR_CHECK
     )
 
 
