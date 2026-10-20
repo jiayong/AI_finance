@@ -1,0 +1,22 @@
+# 运行产物
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# FactorBench 接入的缓存与结果（数据/产物，不入库）
+_fb_cache*/
+_fb_out*/
+factorbench_out/
+
+# 行情缓存（体积大）
+*.parquet
+*.pkl
+
+# 上游遗留的 macOS 元数据
+.DS_Store
+
+# 本地临时文件
+_pipfreeze.txt
+*.log
+Thumbs.db
