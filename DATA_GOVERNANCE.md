@@ -259,8 +259,9 @@ python -m pip install -r requirements-frozen.txt
 # 2. 离线全链路自检（不需要网络，5 项）
 python verify_factorbench.py
 
-# 3. 单元测试（15 项因子一致性）
-pytest test_factor_engine.py test_factor_specs.py -q
+# 3. 因子定义测试（独立脚本，不是 pytest 用例）
+python test_factor_engine.py
+python test_factor_specs.py
 
 # 4. 真实数据（需要 Yahoo 可用）
 python run_factorbench_eval.py --stage all --cost-model liquidity

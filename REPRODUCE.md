@@ -120,13 +120,20 @@ python verify_factorbench.py
 **完全离线**，用的是 `_make_synthetic_cache.py` 的固定 seed 合成行情，
 所以结果可重复。
 
-再跑单元测试：
+再跑因子定义测试：
 
 ```bash
-pytest test_factor_engine.py test_factor_specs.py -q
+python test_factor_engine.py
+python test_factor_specs.py
 ```
 
-期望 `15 passed` —— 覆盖 15 个因子的定义与 `FACTOR_SPECS` 配置分发。
+期望 `test_factor_engine.py` 输出 `passed 15/15`，
+`test_factor_specs.py` 以 `FACTOR_SPECS 与分发器一致 ✓` 结尾。两者退出码都应为 0。
+
+> **这两个是独立脚本，不是 pytest 用例。** 请直接 `python test_xxx.py` 运行；
+> 用 `pytest test_factor_engine.py` 会显示 `no tests ran`——文件内部没有
+> 命名为 `test_*` 的函数（断言函数都叫 `_`），pytest 收集不到。
+> 这是刻意保持的：脚本可在无 pytest 的机器上直接跑，自检结果自解释。
 
 ---
 

@@ -31,5 +31,8 @@ seaborn==0.13.2
 # 组合优化（main.py 的 cvxpy 部分）
 cvxpy==1.8.2
 
-# 测试
-pytest==9.1.1
+# 可选：pytest
+# 注意 test_factor_engine.py / test_factor_specs.py 是独立脚本，直接 python 运行即可，
+# 不依赖 pytest（内部断言函数不以 test_ 开头，pytest 收集不到）。
+# 保留此项仅为你自己写新测试时用。
+# pytest==9.1.1
