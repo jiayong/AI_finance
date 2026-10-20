@@ -36,6 +36,18 @@ git checkout medium-blog
 > `origin` 指向**本 fork**，可以自由推送。若要拉上游更新：
 > `git remote add upstream https://github.com/Yazdan-Babazadeh/AI_finance.git && git fetch upstream`
 
+**如果要复现一个确定的快照，用 tag 而不是分支：**
+
+```bash
+git clone --branch factor-eval-2026-10 git@github.com:jiayong/AI_finance.git
+```
+
+按 tag 克隆会进入 detached HEAD 状态（annotated tag 的正常行为）。只读复现没问题；
+要在此基础上提交，先 `git switch -c work`。
+
+该 tag 对应提交 `ff1c4c3`，已实测：离线自检 5/5、`python test_factor_engine.py` 15/15、
+`python test_factor_specs.py` 一致。
+
 ---
 
 ## 2. 安装依赖
